@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; frame-src 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests" />
+<title>VORTEX — dalle notizie all'onda</title>
+<meta name="description" data-i18n-attr="content" data-i18n="meta.desc" content="VORTEX è un ecosistema di quattro applicazioni modulari per la produzione televisiva e la comunicazione in tempo reale. L'AI suggerisce, la regia e la redazione decidono." />
+<meta name="theme-color" content="#070809" />
+<meta property="og:title" content="VORTEX — dalle notizie all'onda" />
+<meta property="og:description" content="Quattro applicazioni modulari per regia, comunicazioni di troupe, riunioni multilingue e grafiche broadcast." />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<style>
+  :root{
+    --void:#070809; --void2:#0a0d10; --panel:#11151a; --panel2:#161b21; --well:#0a0d10;
+    --edge:#2e3a46; --edge-hi:#4a5865; --line:#222b34; --line-soft:rgba(255,255,255,.06);
+    --pgm:#ff2a39; --pgm-glow:rgba(255,42,57,.55);
+    --pvw:#16e27d; --pvw-glow:rgba(22,226,125,.45);
+    --amber:#ffb02e; --cyan:#3fd7ea; --violet:#b06ad9;
+    --ink:#e2e9f0; --dim:#a2afbc; --dim2:#83919e;
+    --radius:12px;
+    --maxw:1200px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  body{
+    background:
+      radial-gradient(1200px 620px at 78% -12%, #141a21 0%, transparent 58%),
+      radial-gradient(900px 500px at 8% 8%, #0f151b 0%, transparent 55%),
+      var(--void);
+    color:var(--ink);
+    font-family:'Saira',system-ui,-apple-system,sans-serif;
+    font-size:17px; line-height:1.62; font-weight:400;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+  .skip-link{position:fixed;top:8px;left:8px;z-index:1000;padding:10px 14px;border-radius:8px;background:var(--ink);color:var(--void);font-weight:700;transform:translateY(-150%)}
+  .skip-link:focus{transform:none}
+  ::selection{background:var(--pgm);color:#fff}
+
+  /* ---- firma tipografica ---- */
+  .mono{font-family:'JetBrains Mono',monospace}
+  .cond{font-family:'Saira Condensed',sans-serif}
+  h1,h2,h3{font-family:'Saira',sans-serif;font-weight:700;letter-spacing:-.02em;line-height:1.03}
+  .eyebrow{
+    font-family:'Saira Condensed',sans-serif;font-weight:700;
+    font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--cyan);opacity:.7}
+  .eyebrow.pgm{color:var(--pgm)} .eyebrow.pgm::before{background:var(--pgm)}
+  .eyebrow.violet{color:var(--violet)} .eyebrow.violet::before{background:var(--violet)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+
+  /* ---- NAV ---- */
+  nav{position:sticky;top:0;z-index:60;background:rgba(7,8,9,.72);backdrop-filter:blur(16px);border-bottom:1px solid var(--line-soft)}
+  .navin{max-width:var(--maxw);margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:26px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Saira',sans-serif;font-weight:700;font-size:21px;letter-spacing:.02em}
+    .brand .brand-logo{width:26px;height:26px;object-fit:contain;display:block;filter:drop-shadow(0 0 9px rgba(56,204,255,.55))}
+  .brand .dot{width:12px;height:12px;border-radius:50%;background:var(--pgm);box-shadow:0 0 14px var(--pgm-glow);animation:pulse 2s infinite}
+  .brand small{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.24em;color:var(--dim2);text-transform:uppercase;margin-left:2px}
+  .navlinks{display:flex;gap:24px;margin-left:20px}
+  .navlinks a{font-size:14.5px;color:var(--dim);font-weight:500;transition:color .18s}
+  .navlinks a:hover{color:var(--ink)}
+  .navright{margin-left:auto;display:flex;align-items:center;gap:16px}
+  .repo-link{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:6px 10px;transition:color .16s,border-color .16s}
+  .repo-link:hover{color:var(--ink);border-color:var(--edge-hi)}
+  .langsw{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+  .langsw button{background:transparent;color:var(--dim2);border:0;padding:6px 10px;cursor:pointer;letter-spacing:.05em;transition:all .16s}
+  .langsw button.on{background:var(--cyan);color:#04222a}
+  .navcta{background:var(--ink);color:var(--void);padding:9px 17px;border-radius:9px;font-weight:600;font-size:14.5px;transition:transform .16s,box-shadow .16s}
+  .navcta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .navtoggle{display:none}
+
+  /* ---- HERO ---- */
+  .hero{padding:66px 0 26px;position:relative}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:46px;align-items:center}
+  .hero-grid>*{min-width:0}
+  .hero h1{font-size:clamp(40px,5.6vw,72px);margin:20px 0 0}
+  .hero h1 .air{color:var(--pgm)}
+  .hero .lead{font-size:20px;color:var(--dim);max-width:520px;margin-top:20px;line-height:1.55}
+  .hero .lead b{color:var(--ink);font-weight:600}
+  .hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+  .btn{padding:13px 22px;border-radius:10px;font-weight:600;font-size:15.5px;cursor:pointer;border:1px solid transparent;transition:transform .16s,box-shadow .16s,background .16s}
+  .btn.primary{background:var(--pgm);color:#fff;box-shadow:0 0 0 1px rgba(255,42,57,.3),0 14px 34px -12px var(--pgm-glow)}
+  .btn.primary:hover{transform:translateY(-2px)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--edge)}
+  .btn.ghost:hover{border-color:var(--edge-hi);background:rgba(255,255,255,.03)}
+  .hero-proof{display:flex;gap:22px;margin-top:34px;flex-wrap:wrap;font-family:'Saira Condensed',sans-serif;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim2);font-weight:600}
+  .hero-proof span{display:flex;align-items:center;gap:8px}
+  .hero-proof i{width:6px;height:6px;border-radius:50%;background:var(--pvw);box-shadow:0 0 8px var(--pvw-glow);font-style:normal}
+
+  /* ---- device / regia viva (hero) ---- */
+  .device{background:linear-gradient(180deg,#0e1318,#0a0d11);border:1px solid var(--edge);border-radius:16px;padding:14px;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);position:relative}
+  .dev-bar{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--dim2);padding:2px 4px 12px}
+  .dev-bar .rec{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--pgm);font-weight:700}
+  .dev-bar .rec i{width:9px;height:9px;border-radius:50%;background:var(--pgm);box-shadow:0 0 10px var(--pgm-glow);animation:pulse 1.4s infinite;font-style:normal}
+  .mon2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mon{position:relative;aspect-ratio:16/9;border-radius:8px;border:2px solid var(--edge);overflow:hidden;background:#05070a}
+  .mon.pgm{border-color:var(--pgm);box-shadow:0 0 0 1px var(--pgm),0 0 22px -4px var(--pgm-glow)}
+  .mon.pvw{border-color:var(--pvw);box-shadow:0 0 0 1px var(--pvw),0 0 22px -6px var(--pvw-glow)}
+  .mon .feed{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+  .mon .feed::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,9,.14),transparent 32%,transparent 68%,rgba(4,6,9,.52))}
+  .mon .tag{position:absolute;top:0;left:0;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.14em;padding:3px 9px;color:#fff;border-bottom-right-radius:6px}
+  .mon.pgm .tag{background:var(--pgm)} .mon.pvw .tag{background:var(--pvw);color:#06231a}
+  .mon .umd{position:absolute;bottom:0;left:0;right:0;font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.08em;padding:3px 8px;background:rgba(4,6,9,.72);color:var(--ink);display:flex;justify-content:space-between}
+  .mon .umd i{font-style:normal;color:var(--dim2)}
+  /* i .feed ora portano frame reali via background-image inline */
+  .mv{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}
+  .mv .cell{position:relative;aspect-ratio:16/9;border-radius:4px;border:1.5px solid var(--edge);background:#0b1014;background-size:cover;background-position:center;overflow:hidden;font-family:'Saira Condensed',sans-serif}
+  .mv .cell::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(4,6,9,.6))}
+  .mv .cell .cu{position:absolute;bottom:0;left:0;right:0;font-size:8.5px;font-weight:600;letter-spacing:.04em;padding:1.5px 4px;background:rgba(4,6,9,.7);color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mv .cell.pgm{border-color:var(--pgm)} .mv .cell.pgm .cu{background:var(--pgm);color:#fff}
+  .mv .cell.pvw{border-color:var(--pvw)} .mv .cell.pvw .cu{background:var(--pvw);color:#06231a}
+  .mv .cell.g1{background:linear-gradient(180deg,#26323d,#0e141a)} .mv .cell.g2{background:linear-gradient(180deg,#2c3a2b,#121a12)}
+  .mv .cell.g3{background:linear-gradient(160deg,#392a3d,#160f18)} .mv .cell.g4{background:linear-gradient(180deg,#3a3326,#181410)}
+  .mv .cell.g5{background:linear-gradient(180deg,#22303c,#0c1218)} .mv .cell.g6{background:linear-gradient(180deg,#2f2331,#140e16)}
+  .mv .cell.g7{background:linear-gradient(180deg,#26323d,#0e141a)} .mv .cell.g8{background:linear-gradient(180deg,#2b2b34,#121218)}
+  /* OSD comando vocale */
+  .osd{margin-top:12px;background:rgba(4,6,9,.66);border:1px solid var(--line);border-radius:9px;padding:11px 13px;font-family:'JetBrains Mono',monospace}
+  .osd-you{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink)}
+  .osd-you .mic{width:9px;height:9px;border-radius:50%;background:var(--pgm);box-shadow:0 0 9px var(--pgm-glow);animation:pulse 1s infinite;flex:none}
+  .osd-you .q::after{content:"▌";color:var(--cyan);animation:caret 1s steps(1) infinite}
+  .osd-do{font-size:11.5px;color:var(--pvw);margin-top:6px;letter-spacing:.02em;min-height:16px}
+  .osd-do::before{content:"↳ ";color:var(--dim2)}
+
+  /* ---- FLUSSO (cosa fa) ---- */
+  section{padding:74px 0;position:relative}
+  .sec-head{max-width:760px}
+  .sec-head h2{font-size:clamp(30px,3.9vw,46px);margin:16px 0 0}
+  .sec-head p{color:var(--dim);font-size:18px;margin-top:16px}
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+  .step{background:linear-gradient(180deg,var(--panel),#0e1217);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;position:relative;overflow:hidden}
+  .step .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim2);letter-spacing:.1em}
+  .step h4{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:19px;letter-spacing:.02em;margin:12px 0 7px;text-transform:uppercase}
+  .step p{font-size:14.5px;color:var(--dim);line-height:1.5}
+  .step .tagm{display:inline-block;margin-top:12px;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+  .step.human{border-color:rgba(255,42,57,.4)}
+  .step.human::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--pgm)}
+  .tagm.you{background:rgba(255,42,57,.14);color:#ff7a84}
+  .tagm.ai{background:rgba(176,106,217,.14);color:#c58fe0}
+
+  /* ---- blocco prodotto ---- */
+  .prod{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .prod>*{min-width:0}
+  .prod.rev{grid-template-columns:1fr 1fr}
+  .prod.rev .prod-copy{order:2} .prod.rev .prod-ui{order:1}
+  .prod-copy h2{font-size:clamp(28px,3.6vw,42px);margin:15px 0 0}
+  .prod-copy .sub{color:var(--dim);font-size:18px;margin-top:15px}
+  .flist{list-style:none;margin:22px 0 0;display:flex;flex-direction:column;gap:11px}
+  .flist li{display:flex;gap:11px;font-size:15.5px;color:var(--ink)}
+  .flist li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);margin-top:9px;flex:none;box-shadow:0 0 8px rgba(63,215,234,.5)}
+  .prodcta{display:inline-flex;align-items:center;gap:9px;margin-top:26px;font-weight:600;font-size:16px;color:var(--ink);border-bottom:2px solid var(--pgm);padding-bottom:3px;transition:gap .18s}
+  .prodcta:hover{gap:15px}
+  .prodcta .ar{color:var(--pgm)}
+
+  .panelbox{background:linear-gradient(180deg,#0f1318,#0a0d11);border:1px solid var(--edge);border-radius:14px;padding:14px;box-shadow:0 34px 80px -34px rgba(0,0,0,.75)}
+  .pb-head{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;border-bottom:1px solid var(--line-soft);margin-bottom:12px}
+  .pb-head h3{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:16px;letter-spacing:.06em}
+  .pb-head h3 b{color:var(--pgm);font-weight:700}
+  .pb-badge{margin-left:auto;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.1em;padding:3px 9px;border-radius:20px;text-transform:uppercase}
+  .pb-badge.ai{background:rgba(63,215,234,.14);color:var(--cyan)}
+  .pb-badge.work{background:rgba(255,176,46,.16);color:var(--amber);animation:pulse 1.6s infinite}
+
+  /* news card viva */
+  .ncard{display:grid;grid-template-columns:64px 1fr auto;gap:11px;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-bottom:9px;align-items:center;transition:border-color .2s,background .2s}
+  .ncard.on{border-color:rgba(22,226,125,.45);background:linear-gradient(180deg,rgba(22,226,125,.05),var(--panel))}
+  .ncard .thumb{width:64px;height:44px;border-radius:6px;position:relative;overflow:hidden;background-size:cover;background-position:center;background-color:#0b1014}
+  .ncard .thumb .rk{position:absolute;top:2px;left:2px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;background:rgba(4,6,9,.7);padding:1px 5px;border-radius:4px}
+  .ncard .kick{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.05em;display:flex;gap:8px;align-items:center;color:var(--dim2);text-transform:uppercase}
+  .ncard .kick b{color:#ff5561}
+  .ncard .kick .fr{color:var(--pvw)}
+  .ncard .hl{font-size:14.5px;font-weight:500;margin:4px 0 7px;line-height:1.25}
+  .scores{display:flex;gap:12px}
+  .sc{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--dim2)}
+  .sc .bar{width:52px;height:4px;border-radius:3px;background:#0b1014;overflow:hidden}
+  .sc .bar i{display:block;height:100%;width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+  .sc.imp .bar i{background:linear-gradient(90deg,#ff8a2a,#ff2a39)}
+  .sc.tg .bar i{background:linear-gradient(90deg,#29b7cb,#16e27d)}
+  .ntoggle{width:70px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--well);color:var(--dim);font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .2s}
+  .ntoggle .ic{font-size:15px;line-height:1}
+  .ntoggle.on{border-color:var(--pvw);color:var(--pvw);background:rgba(22,226,125,.08);box-shadow:0 0 14px -4px var(--pvw-glow)}
+  .pb-foot{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .populate{margin-left:auto;background:var(--cyan);color:#04222a;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;border-radius:9px;border:0;cursor:pointer}
+  .pb-foot .cnt{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
+
+  /* progress NewsIntelligence */
+  .nprog{margin-bottom:12px}
+  .nprog-h{display:flex;justify-content:space-between;font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+  .nprog-b{height:5px;border-radius:4px;background:#0b1014;overflow:hidden}
+  .nprog-b i{display:block;height:100%;width:34%;background:linear-gradient(90deg,transparent,var(--amber),transparent);animation:slide 1.5s infinite}
+
+  /* bus regia */
+  .bus{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+  .btag{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:.08em;padding:4px 7px;border-radius:5px;color:#fff;flex:none;width:44px;text-align:center}
+  .btag.pgm{background:var(--pgm)} .btag.pvw{background:var(--pvw);color:#06231a}
+  .bsrc{flex:1;display:flex;gap:5px;overflow:hidden}
+  .src{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 4px;text-align:center;font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.03em;color:var(--dim);position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .2s}
+  .src .bd{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim2)}
+  .src.selp{border-color:var(--pgm);color:#fff;background:rgba(255,42,57,.1)}
+  .src.selp::after{content:"";position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:var(--pgm);box-shadow:0 0 8px var(--pgm-glow);animation:pulse 1.4s infinite}
+  .src.selv{border-color:var(--pvw);color:var(--pvw);background:rgba(22,226,125,.08)}
+  .tbar-row{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .tbar{flex:none;width:34px;height:70px;border:1px solid var(--edge);border-radius:6px;background:var(--well);position:relative;overflow:hidden}
+  .tbar i{position:absolute;left:0;right:0;bottom:0;height:var(--tb,58%);background:linear-gradient(180deg,rgba(22,226,125,.35),var(--pvw));transition:height 2.4s cubic-bezier(.4,0,.2,1)}
+  .tbar-row .osd{flex:1;margin-top:0}
+
+  /* intercom matrix */
+  .imx{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .port{aspect-ratio:1/.82;border-radius:9px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:8px 4px;position:relative}
+  .port .led{width:13px;height:13px;border-radius:50%;background:#26313b;transition:all .3s}
+  .port.listen .led{background:var(--cyan);box-shadow:0 0 12px rgba(63,215,234,.6)}
+  .port.talk{border-color:var(--pgm)}
+  .port.talk .led{background:var(--pgm);box-shadow:0 0 13px var(--pgm-glow);animation:pulse 1s infinite}
+  .port .pn{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.04em;color:var(--ink);text-align:center}
+  .port .pr{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--dim2)}
+
+  /* meet subtitles */
+  .meet{display:flex;flex-direction:column;gap:11px}
+  .bubble{border:1px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--panel);position:relative}
+  .bubble .who{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:.06em;color:var(--dim2);text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .bubble .flag{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--well);color:var(--cyan)}
+  .bubble .src-t{font-size:15px;color:var(--dim)}
+  .bubble .tr{font-size:15.5px;color:var(--ink);margin-top:7px;padding-top:7px;border-top:1px dashed var(--line)}
+  .bubble .tr .flag{color:var(--violet)}
+  .bubble.live::after{content:"";position:absolute;top:12px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--violet);box-shadow:0 0 10px rgba(176,106,217,.6);animation:pulse 1.2s infinite}
+
+  /* AI Graphic Studio */
+  .gfx-preview{aspect-ratio:16/9;border-radius:11px;border:1px solid var(--line);background:linear-gradient(145deg,#17212a,#090d11);position:relative;overflow:hidden}
+  .gfx-lower{position:absolute;left:7%;right:20%;bottom:16%;padding:12px 16px;border-left:5px solid var(--cyan);background:linear-gradient(90deg,rgba(63,215,234,.28),rgba(8,11,15,.94));box-shadow:0 14px 36px rgba(0,0,0,.45)}
+  .gfx-lower b{display:block;font-size:17px}.gfx-lower span{color:var(--dim);font-size:13px}
+  .gfx-prompt{margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--dim);font:600 10.5px 'JetBrains Mono',monospace}.gfx-prompt b{color:var(--violet)}
+
+  /* audio strip mini (nella sezione regia, riga extra) */
+  .strip-row{display:flex;gap:6px;margin-top:10px}
+  .strip{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:7px 5px;text-align:center}
+  .strip .sn{font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:9.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strip .proc{display:flex;gap:3px;justify-content:center;margin:5px 0}
+  .strip .proc b{font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;padding:1px 3px;border-radius:3px;background:var(--well);color:var(--dim2)}
+  .strip .proc b.on{background:linear-gradient(180deg,#ffc65e,#e69b1a);color:#3a2400}
+  .strip .vu{height:24px;display:flex;gap:2px;justify-content:center;align-items:flex-end}
+  .strip .vu span{width:4px;background:linear-gradient(180deg,#16c46e,#0d8a4c);border-radius:2px;transition:height .12s}
+
+  /* ---- CTA finale ---- */
+  .closing{text-align:center;padding:96px 0 78px}
+  .closing h2{font-size:clamp(38px,6vw,76px);letter-spacing:-.03em}
+  .closing h2 .v{color:var(--pgm)}
+  .closing p{color:var(--dim);font-size:19px;margin:20px auto 0;max-width:560px}
+  .closing .hero-cta{justify-content:center}
+  .filmslot{max-width:940px;margin:44px auto 0;aspect-ratio:16/9;border-radius:16px;border:1px solid var(--edge);background:linear-gradient(180deg,#0e1318,#08090b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--dim2);position:relative;overflow:hidden}
+  .filmslot .play{width:66px;height:66px;border-radius:50%;border:1px solid var(--edge-hi);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03)}
+  .filmslot .play::after{content:"";border-left:18px solid var(--ink);border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+  .filmslot .cap{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--line-soft);padding:40px 0 60px;color:var(--dim2)}
+  .footin{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .footin .brand{font-size:18px}
+  .footlinks{margin-left:auto;display:flex;gap:22px;font-size:14px}
+  .footlinks a:hover{color:var(--ink)}
+  .foot-copy{width:100%;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;margin-top:8px}
+
+  /* ---- reveal ---- */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .rv.in{opacity:1;transform:none}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes slide{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+  @keyframes caret{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+  @media (max-width:900px){
+    .hero-grid,.prod,.prod.rev{grid-template-columns:1fr;gap:34px}
+    .prod.rev .prod-copy,.prod.rev .prod-ui{order:0}
+    .flow{grid-template-columns:1fr 1fr}
+    .navlinks{display:none}
+    .hero h1{font-size:clamp(36px,10vw,56px)}
+  }
+  @media (max-width:560px){
+    .wrap,.navin{padding-left:20px;padding-right:20px}
+    .eyebrow{max-width:100%;line-height:1.5;letter-spacing:.18em;flex-wrap:wrap}
+    .hero h1{font-size:clamp(34px,9.2vw,48px)}
+    .hero-proof{gap:12px 16px}
+    .device{min-width:0;overflow:hidden;padding:10px}
+    .dev-bar{font-size:9px;letter-spacing:.08em;gap:6px;flex-wrap:wrap}
+    .dev-bar .rec{margin-left:0}
+    .flow{grid-template-columns:1fr}
+    .imx{grid-template-columns:repeat(3,1fr)}
+    .navright .navcta{display:none}
+  }
+  @media (max-width:400px){
+    .brand{font-size:18px;gap:8px}.brand .brand-logo{width:22px;height:22px}
+    .brand small{display:none}
+    .navin{gap:12px}
+    .navright{gap:8px}
+    .repo-link{font-size:11px;padding:6px}
+    .langsw button{padding:6px 7px}
+    .prod-ui{overflow:hidden}
+    .panelbox{padding:10px;overflow:hidden}
+    .pb-head{min-width:0;overflow:hidden}.pb-head h3{min-width:0;overflow:hidden;text-overflow:ellipsis}
+    .ncard{grid-template-columns:48px minmax(0,1fr);gap:8px;padding:8px}
+    .ncard .thumb{width:48px;height:38px}
+    .ncard .kick{gap:4px;flex-wrap:wrap}
+    .ncard .hl{font-size:12.5px}
+    .ntoggle{display:none}
+    .strip-row{display:grid;grid-template-columns:1fr 1fr}
+    .imx{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important}
+    .rv{opacity:1;transform:none;transition:none}
+    .sc .bar i,.tbar i{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main" data-i18n="skip">Salta al contenuto</a>
+
+<nav>
+  <div class="navin">
+    <a class="brand" href="#top"><img src="assets/vortex-mark.png" class="brand-logo" alt="">VORTEX<span class="dot"></span><small>broadcast os</small></a>
+    <div class="navlinks">
+      <a href="#redazione" data-i18n="nav.news">Redazione</a>
+      <a href="#regia" data-i18n="nav.regia">Regia</a>
+      <a href="#intercom" data-i18n="nav.intercom">Intercom</a>
+      <a href="#meet" data-i18n="nav.meet">Meet</a>
+      <a href="#graphics" data-i18n="nav.graphics">Grafiche</a>
+    </div>
+    <div class="navright">
+      <a class="repo-link" href="https://github.com/Solarys431/vortex-site" aria-label="GitHub repository">GitHub</a>
+      <div class="langsw" role="group" aria-label="Lingua / Language">
+        <button type="button" data-lang="it" class="on" aria-pressed="true">IT</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="navcta" href="#redazione" data-i18n="nav.cta">Scopri di più</a>
+    </div>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="main"><div class="wrap"><div class="hero-grid">
+  <div>
+    <span class="eyebrow pgm" data-i18n="hero.eyebrow">Ecosistema broadcast · prototipi funzionali</span>
+    <h1 data-i18n-html="hero.h1">Dalle notizie <span class="air">all'onda.</span><br>Al comando ci sei tu.</h1>
+    <p class="lead" data-i18n-html="hero.lead">Quattro applicazioni modulari per la produzione televisiva e la comunicazione in tempo reale. <b>L'AI suggerisce, la regia e la redazione decidono.</b></p>
+    <div class="hero-cta">
+      <a class="btn primary" href="#redazione" data-i18n="hero.cta1">Guarda com'è fatto</a>
+    </div>
+    <div class="hero-proof">
+      <span><i></i><span data-i18n="hero.p1">Software-first</span></span>
+      <span><i></i><span data-i18n="hero.p2">Comandi a voce</span></span>
+      <span><i></i><span data-i18n="hero.p3">Uscite configurabili</span></span>
+      <span><i></i><span data-i18n="hero.p4">Self-hosted</span></span>
+    </div>
+  </div>
+
+  <!-- regia viva -->
+  <div class="device" aria-hidden="true">
+    <div class="dev-bar">
+      <span>VORTEX&nbsp;REGIA</span><span>·</span><span>DEMO&nbsp;SOFTWARE</span><span>·</span><span>DATI&nbsp;SIMULATI</span>
+      <span class="rec"><i></i>SIMULAZIONE</span>
+    </div>
+    <div class="mon2">
+      <div class="mon pvw"><div class="feed" id="mPvwFeed" style="background-image:url('assets/feeds/milano.jpg')"></div><span class="tag">PREVIEW</span><span class="umd"><b id="mPvwName">ESTERNA 1</b><i id="mPvwWho">SARA CONTI · MILANO</i></span></div>
+      <div class="mon pgm"><div class="feed" id="mPgmFeed" style="background-image:url('assets/feeds/studio.jpg')"></div><span class="tag">PROGRAM</span><span class="umd"><b id="mPgmName">CAM 1</b><i id="mPgmWho">GIULIA RINALDI · TG</i></span></div>
+    </div>
+    <div class="mv" id="heroMv">
+      <div class="cell" style="background-image:url('assets/feeds/studio.jpg')"><span class="cu">CAM 1</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/studio2.jpg')"><span class="cu">CAM 2</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/milano.jpg')"><span class="cu">ESTERNA 1</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/roma.jpg')"><span class="cu">ESTERNA 2</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/eolico.jpg')"><span class="cu">AIRSPEED 1</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/skyline.jpg')"><span class="cu">M/E 1</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/stadio.jpg')"><span class="cu">REPLAY</span></div>
+      <div class="cell" style="background-image:url('assets/feeds/notte.jpg')"><span class="cu">LIVEU</span></div>
+    </div>
+    <div class="osd">
+      <div class="osd-you"><span class="mic"></span><span>«&nbsp;</span><span class="q" id="osdQ"></span><span>&nbsp;»</span></div>
+      <div class="osd-do" id="osdA"></div>
+    </div>
+  </div>
+</div></div></header>
+
+<!-- ================= FLUSSO ================= -->
+<section id="flusso"><div class="wrap">
+  <div class="sec-head rv">
+    <span class="eyebrow" data-i18n="flow.eyebrow">Come funziona</span>
+    <h2 data-i18n="flow.h2">Dalla notizia alla diretta, in un solo posto.</h2>
+    <p data-i18n="flow.p">L'intelligenza artificiale fa il lavoro pesante. Le decisioni che contano restano tue.</p>
+  </div>
+  <div class="flow">
+    <div class="step ai rv">
+      <div class="n">01</div>
+      <h4 data-i18n="flow.s1t">Legge le notizie</h4>
+      <p data-i18n="flow.s1p">Aggrega in tempo reale le testate selezionate, con traduzione automatica delle fonti estere.</p>
+      <span class="tagm ai" data-i18n="flow.tag.ai">AI</span>
+    </div>
+    <div class="step ai rv">
+      <div class="n">02</div>
+      <h4 data-i18n="flow.s2t">L'AI valuta e suggerisce</h4>
+      <p data-i18n="flow.s2p">NewsIntelligence raccoglie le fonti configurate, valuta le notizie e suggerisce la scaletta del TG.</p>
+      <span class="tagm ai" data-i18n="flow.tag.ai">AI</span>
+    </div>
+    <div class="step human rv">
+      <div class="n">03</div>
+      <h4 data-i18n="flow.s3t">La redazione approva</h4>
+      <p data-i18n="flow.s3p">La redazione seleziona le notizie e conferma testi, grafiche e ordine di messa in onda.</p>
+      <span class="tagm you" data-i18n="flow.tag.you">Tu decidi</span>
+    </div>
+    <div class="step human rv">
+      <div class="n">04</div>
+      <h4 data-i18n="flow.s4t">Mandi in onda</h4>
+      <p data-i18n="flow.s4p">Niente arriva sullo schermo senza il tuo TAKE. La diretta è nelle tue mani.</p>
+      <span class="tagm you" data-i18n="flow.tag.you">Tu decidi</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= REDAZIONE ================= -->
+<section id="redazione"><div class="wrap"><div class="prod">
+  <div class="prod-copy rv">
+    <span class="eyebrow" data-i18n="news.eyebrow">Redazione · NewsIntelligence</span>
+    <h2 data-i18n="news.h2">NewsIntelligence suggerisce. Redazione e regia decidono.</h2>
+    <p class="sub" data-i18n="news.sub">Raccoglie le fonti configurate, valuta le notizie e suggerisce la scaletta del TG. Testi, grafiche e messa in onda restano sotto controllo umano.</p>
+    <ul class="flist">
+      <li data-i18n="news.f1">Punteggio di importanza e rilevanza per il TG su ogni notizia</li>
+      <li data-i18n="news.f2">Fonti estere tradotte in automatico</li>
+      <li data-i18n="news.f3">Selezioni tu, notizia per notizia, cosa entra in scaletta</li>
+      <li data-i18n="news.f4">Proposta di scaletta e contenuti per un TG da 60 secondi</li>
+    </ul>
+  </div>
+  <div class="prod-ui rv">
+    <div class="panelbox" id="newsUi">
+      <div class="pb-head">
+        <h3>NEWS<b>INTELLIGENCE</b></h3>
+        <span class="pb-badge work" data-i18n="news.badge">NewsIntelligence al lavoro</span>
+      </div>
+      <div class="nprog">
+        <div class="nprog-h"><span data-i18n="news.prog">NewsIntelligence al lavoro</span><span class="mono">18s</span></div>
+        <div class="nprog-b"><i></i></div>
+      </div>
+      <div class="ncard on" data-imp="92" data-tg="88">
+        <span class="thumb" style="background-image:url('assets/feeds/parlamento.jpg')"><span class="rk mono">1</span></span>
+        <div><div class="kick"><b>Politica</b><span>Agenzia</span><span class="fr">• adesso</span></div>
+          <div class="hl">Manovra, il vertice slitta a domani mattina</div>
+          <div class="scores"><span class="sc imp">IMP<span class="bar"><i></i></span></span><span class="sc tg">TG<span class="bar"><i></i></span></span></div></div>
+        <button class="ntoggle on"><span class="ic">✓</span><span data-i18n="news.in">in scaletta</span></button>
+      </div>
+      <div class="ncard on" data-imp="74" data-tg="81">
+        <span class="thumb" style="background-image:url('assets/feeds/solare.jpg')"><span class="rk mono">2</span></span>
+        <div><div class="kick"><b>Economia</b><span>Redazione</span><span class="fr">• 12 min fa</span></div>
+          <div class="hl">Rinnovabili, nuovo record di produzione in Europa</div>
+          <div class="scores"><span class="sc imp">IMP<span class="bar"><i></i></span></span><span class="sc tg">TG<span class="bar"><i></i></span></span></div></div>
+        <button class="ntoggle on"><span class="ic">✓</span><span data-i18n="news.in">in scaletta</span></button>
+      </div>
+      <div class="ncard" data-imp="58" data-tg="52">
+        <span class="thumb" style="background-image:url('assets/feeds/stadio.jpg')"><span class="rk mono">3</span></span>
+        <div><div class="kick"><b>Sport</b><span>Agenzia</span><span>1 h fa</span></div>
+          <div class="hl">Serie A, l'anticipo si chiude in parità</div>
+          <div class="scores"><span class="sc imp">IMP<span class="bar"><i></i></span></span><span class="sc tg">TG<span class="bar"><i></i></span></span></div></div>
+        <button class="ntoggle"><span class="ic">+</span><span data-i18n="news.add">scaletta</span></button>
+      </div>
+      <div class="pb-foot">
+        <span class="cnt"><b id="selCnt">2</b> <span data-i18n="news.sel">in scaletta</span></span>
+        <button class="populate">▸ <span data-i18n="news.populate">Popola scaletta</span></button>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- ================= REGIA ================= -->
+<section id="regia"><div class="wrap"><div class="prod rev">
+  <div class="prod-copy rv">
+    <span class="eyebrow pgm" data-i18n="regia.eyebrow">Prototipo funzionale · VORTEX Regia</span>
+    <h2 data-i18n="regia.h2">Uno switcher software. Anche a voce.</h2>
+    <p class="sub" data-i18n="regia.sub">M/E, DVE, keyer, multiview, audio broadcast, replay e uscite configurabili in un unico ambiente di controllo.</p>
+    <ul class="flist">
+      <li data-i18n="regia.f1">Program e Preview con transizioni e T-bar</li>
+      <li data-i18n="regia.f2">Console audio: HPF, EQ, gate, compressore e LUFS-S stimato</li>
+      <li data-i18n="regia.f3">Supporto tally TSL 3.1/5.0 verso le camere</li>
+      <li data-i18n="regia.f4">«AIRSPEED 2 in onda», «lower conduttore»: la regia esegue</li>
+    </ul>
+    <a class="prodcta" href="../vortex-control/" data-i18n-html="regia.cta">Scopri VORTEX Regia <span class="ar">→</span></a>
+  </div>
+  <div class="prod-ui rv">
+    <div class="panelbox">
+      <div class="pb-head"><h3 class="cond">REGIA</h3><span class="pb-badge ai mono" style="letter-spacing:.06em">M/E 1 · PGM</span></div>
+      <div class="mon2">
+        <div class="mon pvw"><div class="feed" style="background-image:url('assets/feeds/roma.jpg')"></div><span class="tag">PVW</span><span class="umd">ESTERNA 2<i>LUCA FERRARI · ROMA</i></span></div>
+        <div class="mon pgm"><div class="feed" style="background-image:url('assets/feeds/studio.jpg')"></div><span class="tag">PGM</span><span class="umd">CAM 1<i>GIULIA RINALDI</i></span></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="bus"><span class="btag pgm">PGM</span><div class="bsrc">
+          <span class="src selp">CAM 1<span class="bd">1</span></span>
+          <span class="src">ESTERNA 1<span class="bd">E1</span></span>
+          <span class="src">AIRSPEED 2<span class="bd">AS2</span></span>
+          <span class="src">M/E 1<span class="bd">ME1</span></span>
+          <span class="src">REPLAY<span class="bd">RPL</span></span>
+        </div></div>
+        <div class="bus"><span class="btag pvw">PVW</span><div class="bsrc">
+          <span class="src">CAM 1<span class="bd">1</span></span>
+          <span class="src selv">ESTERNA 2<span class="bd">E2</span></span>
+          <span class="src">AIRSPEED 2<span class="bd">AS2</span></span>
+          <span class="src">M/E 1<span class="bd">ME1</span></span>
+          <span class="src">REPLAY<span class="bd">RPL</span></span>
+        </div></div>
+      </div>
+      <div class="strip-row" id="audioStrips">
+        <div class="strip"><div class="sn">GIULIA</div><div class="proc"><b class="on">HPF</b><b class="on">EQ</b><b>GT</b><b class="on">CO</b></div><div class="vu"><span></span><span></span><span></span></div></div>
+        <div class="strip"><div class="sn">OSPITE</div><div class="proc"><b class="on">HPF</b><b class="on">EQ</b><b class="on">GT</b><b>CO</b></div><div class="vu"><span></span><span></span><span></span></div></div>
+        <div class="strip"><div class="sn">EST 1</div><div class="proc"><b>HPF</b><b class="on">EQ</b><b>GT</b><b class="on">CO</b></div><div class="vu"><span></span><span></span><span></span></div></div>
+        <div class="strip"><div class="sn">MASTER</div><div class="proc"><b class="on">LIM</b></div><div class="vu"><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="tbar-row">
+        <div class="tbar"><i></i></div>
+        <div class="osd"><div class="osd-you"><span class="mic"></span><span>«&nbsp;</span><span class="q" id="osdQ2"></span><span>&nbsp;»</span></div><div class="osd-do" id="osdA2"></div></div>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- ================= INTERCOM ================= -->
+<section id="intercom"><div class="wrap"><div class="prod">
+  <div class="prod-copy rv">
+    <span class="eyebrow" data-i18n="icm.eyebrow">Beta test esterno · VORTEX Intercom</span>
+    <h2 data-i18n="icm.h2">Parla con tutta la troupe. Da un'app.</h2>
+    <p class="sub" data-i18n="icm.sub">Intercom software basato sul modello delle matrici broadcast, per iPhone, iPad e Mac. Le postazioni ricevono un invito firmato via link o QR.</p>
+    <ul class="flist">
+      <li data-i18n="icm.f1">TALK, LISTEN, partyline e conferenze</li>
+      <li data-i18n="icm.f2">Fino a 16 circuiti N-1 configurabili con hardware compatibile</li>
+      <li data-i18n="icm.f3">App native iOS, iPadOS e macOS, invito con QR</li>
+      <li data-i18n="icm.f4">La regia comunica in modo mirato con un singolo reparto</li>
+    </ul>
+    <a class="prodcta" href="../vortex-intercom/" data-i18n-html="icm.cta">Scopri VORTEX Intercom <span class="ar">→</span></a>
+  </div>
+  <div class="prod-ui rv">
+    <div class="panelbox">
+      <div class="pb-head"><h3 class="cond">INTERCOM</h3><span class="pb-badge ai mono" style="letter-spacing:.06em">12 PORTE · 4 N-1</span></div>
+      <div class="imx" id="imx">
+        <div class="port talk"><span class="led"></span><span class="pn">REGIA</span><span class="pr">TALK</span></div>
+        <div class="port listen"><span class="led"></span><span class="pn">CAM 1</span><span class="pr">LISTEN</span></div>
+        <div class="port listen"><span class="led"></span><span class="pn">CAM 2</span><span class="pr">LISTEN</span></div>
+        <div class="port"><span class="led"></span><span class="pn">GRAFICA</span><span class="pr">—</span></div>
+        <div class="port listen"><span class="led"></span><span class="pn">AUDIO</span><span class="pr">LISTEN</span></div>
+        <div class="port"><span class="led"></span><span class="pn">ESTERNA</span><span class="pr">—</span></div>
+        <div class="port listen"><span class="led"></span><span class="pn">LED WALL</span><span class="pr">LISTEN</span></div>
+        <div class="port"><span class="led"></span><span class="pn">TRUCCO</span><span class="pr">—</span></div>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- ================= MEET ================= -->
+<section id="meet"><div class="wrap"><div class="prod rev">
+  <div class="prod-copy rv">
+    <span class="eyebrow violet" data-i18n="meet.eyebrow">Prototipo funzionale · VORTEX Meet</span>
+    <h2 data-i18n="meet.h2">Ognuno parla la sua lingua. L'AI prende nota.</h2>
+    <p class="sub" data-i18n="meet.sub">Prototipo autonomo per riunioni multilingue con traduzione simultanea, sottotitoli tradotti e assistente AI. È progettato anche per future integrazioni broadcast.</p>
+    <ul class="flist">
+      <li data-i18n="meet.f1">Verbale, sintesi e attività generati a fine riunione</li>
+      <li data-i18n="meet.f2">Traduzione simultanea audio e testuale durante la conversazione</li>
+      <li data-i18n="meet.f3">Canale dati predisposto per integrazioni broadcast</li>
+      <li data-i18n="meet.f4">Dieci lingue con sottotitoli tradotti dal vivo</li>
+    </ul>
+    <a class="prodcta" href="../vortex-communication-os/" data-i18n-html="meet.cta">Scopri VORTEX Meet <span class="ar">→</span></a>
+  </div>
+  <div class="prod-ui rv">
+    <div class="panelbox">
+      <div class="pb-head"><h3 class="cond">MEET</h3><span class="pb-badge ai mono" style="letter-spacing:.06em">EN · IT · ES · 中文</span></div>
+      <div class="meet">
+        <div class="bubble live">
+          <div class="who"><span class="flag">EN</span> James · London</div>
+          <div class="src-t">We go live in thirty seconds, please stand by.</div>
+          <div class="tr"><span class="flag">IT</span> Andiamo in onda tra trenta secondi, tenetevi pronti.</div>
+        </div>
+        <div class="bubble">
+          <div class="who"><span class="flag">IT</span> Sara · Milano</div>
+          <div class="src-t">Ricevuto, l'esterna è pronta.</div>
+          <div class="tr"><span class="flag">EN</span> Copy that, the live shot is ready.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div></section>
+
+<!-- ================= AI GRAPHIC STUDIO ================= -->
+<section id="graphics"><div class="wrap"><div class="prod">
+  <div class="prod-copy rv">
+    <span class="eyebrow violet" data-i18n="gfx.eyebrow">Prototipo funzionale · VORTEX AI Graphic Studio</span>
+    <h2 data-i18n="gfx.h2">Grafiche broadcast guidate dalla voce.</h2>
+    <p class="sub" data-i18n="gfx.sub">Controller basato su SPX-GC con comandi vocali, assistenza Gemini per contenuti e configurazione dei template, collaborazione tramite Supabase e playout CasparCG.</p>
+    <ul class="flist">
+      <li data-i18n="gfx.f1">Comandi vocali tradotti in azioni controllabili sul rundown</li>
+      <li data-i18n="gfx.f2">Assistenza AI per contenuti, template e sequenze operative</li>
+      <li data-i18n="gfx.f3">Scalette condivise tra postazioni autorizzate</li>
+      <li data-i18n="gfx.f4">Preview prima del playout CasparCG</li>
+    </ul>
+    <a class="prodcta" href="../vortex-ai-graphic-studio/" data-i18n-html="gfx.cta">Scopri VORTEX AI Graphic Studio <span class="ar">→</span></a>
+  </div>
+  <div class="prod-ui rv"><div class="panelbox">
+    <div class="pb-head"><h3 class="cond">AI GRAPHIC STUDIO</h3><span class="pb-badge ai mono" style="letter-spacing:.06em">SPX-GC · GEMINI</span></div>
+    <div class="gfx-preview"><div class="gfx-lower"><b>GIULIA RINALDI</b><span data-i18n="gfx.demo.role">Conduttrice · Edizione sera</span></div></div>
+    <div class="gfx-prompt"><b>VOICE</b> · <span data-i18n="gfx.demo.prompt">«Prepara il sottopancia della conduttrice»</span></div>
+  </div></div>
+</div></div></section>
+
+<!-- ================= CLOSING ================= -->
+<section class="closing" id="demo"><div class="wrap rv">
+  <span class="eyebrow pgm" style="justify-content:center" data-i18n="close.eyebrow">Un ecosistema coordinato</span>
+  <h2 data-i18n-html="close.h2">VORTEX. <span class="v">Quattro prodotti.</span></h2>
+  <p data-i18n="close.p">Regia, Meet e AI Graphic Studio sono prototipi funzionali. Intercom è in validazione esterna tramite beta test su TestFlight.</p>
+  <div class="hero-cta">
+    <a class="btn primary" href="../vortex-control/" data-i18n="close.cta2">Esplora i prodotti</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap"><div class="footin">
+  <a class="brand" href="#top"><img src="assets/vortex-mark.png" class="brand-logo" alt="">VORTEX<span class="dot"></span></a>
+  <div class="footlinks">
+    <a href="../vortex-control/" data-i18n="nav.regia">Regia</a>
+    <a href="../vortex-intercom/" data-i18n="nav.intercom">Intercom</a>
+    <a href="../vortex-communication-os/" data-i18n="nav.meet">Meet</a>
+    <a href="../vortex-ai-graphic-studio/" data-i18n="nav.graphics">Grafiche</a>
+  </div>
+  <div class="foot-copy">© 2026 VORTEX · comms — <span data-i18n="foot.rights">tutti i diritti riservati</span> · <span data-i18n="foot.privacy">La landing non usa cookie, analytics, profilazione o raccolta dati</span></div>
+</div></div></footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =============== i18n =============== */
+  var I18N = {
+    it:{
+      "meta.title":"VORTEX — dalle notizie all'onda",
+      "skip":"Salta al contenuto",
+      "meta.desc":"VORTEX è un ecosistema di quattro applicazioni modulari per la produzione televisiva e la comunicazione in tempo reale. L'AI suggerisce, la regia e la redazione decidono.",
+      "nav.news":"Redazione","nav.regia":"Regia","nav.intercom":"Intercom","nav.meet":"Meet","nav.graphics":"Grafiche","nav.cta":"Scopri di più",
+      "hero.eyebrow":"Ecosistema broadcast · prototipi funzionali",
+      "hero.h1":"Dalle notizie <span class='air'>all'onda.</span><br>Al comando ci sei tu.",
+      "hero.lead":"Quattro applicazioni modulari per la produzione televisiva e la comunicazione in tempo reale. <b>L'AI suggerisce, la regia e la redazione decidono.</b>",
+      "hero.cta1":"Guarda com'è fatto","hero.cta2":"Scopri di più",
+      "hero.p1":"Software-first","hero.p2":"Comandi a voce","hero.p3":"Uscite configurabili","hero.p4":"Self-hosted",
+      "flow.eyebrow":"Come funziona","flow.h2":"Dalla notizia alla diretta, in un solo posto.",
+      "flow.p":"L'intelligenza artificiale fa il lavoro pesante. Le decisioni che contano restano tue.",
+      "flow.s1t":"Legge le notizie","flow.s1p":"Aggrega in tempo reale le testate selezionate, con traduzione automatica delle fonti estere.",
+      "flow.s2t":"L'AI valuta e suggerisce","flow.s2p":"NewsIntelligence raccoglie le fonti configurate, valuta le notizie e suggerisce la scaletta del TG.",
+      "flow.s3t":"La redazione approva","flow.s3p":"La redazione seleziona le notizie e conferma testi, grafiche e ordine di messa in onda.",
+      "flow.s4t":"Mandi in onda","flow.s4p":"Niente arriva sullo schermo senza il tuo TAKE. La diretta è nelle tue mani.",
+      "flow.tag.ai":"AI","flow.tag.you":"Tu decidi",
+      "news.eyebrow":"Redazione · NewsIntelligence","news.h2":"NewsIntelligence suggerisce. Redazione e regia decidono.",
+      "news.sub":"Raccoglie le fonti configurate, valuta le notizie e suggerisce la scaletta del TG. Testi, grafiche e messa in onda restano sotto controllo umano.",
+      "news.f1":"Punteggio di importanza e rilevanza per il TG su ogni notizia",
+      "news.f2":"Fonti estere tradotte in automatico",
+      "news.f3":"Selezioni tu, notizia per notizia, cosa entra in scaletta",
+      "news.f4":"Proposta di scaletta e contenuti per un TG da 60 secondi",
+      "news.badge":"NewsIntelligence al lavoro","news.prog":"NewsIntelligence al lavoro",
+      "news.in":"in scaletta","news.add":"scaletta","news.sel":"in scaletta","news.populate":"Popola scaletta",
+      "regia.eyebrow":"Prototipo funzionale · VORTEX Regia","regia.h2":"Uno switcher software. Anche a voce.",
+      "regia.sub":"M/E, DVE, keyer, multiview, audio broadcast, replay e uscite configurabili in un unico ambiente di controllo.",
+      "regia.f1":"Program e Preview con transizioni e T-bar",
+      "regia.f2":"Console audio: HPF, EQ, gate, compressore e LUFS-S stimato",
+      "regia.f3":"Supporto tally TSL 3.1/5.0 verso le camere",
+      "regia.f4":"«AIRSPEED 2 in onda», «lower conduttore»: la regia esegue",
+      "regia.cta":"Scopri VORTEX Regia <span class='ar'>→</span>",
+      "icm.eyebrow":"Beta test esterno · VORTEX Intercom","icm.h2":"Parla con tutta la troupe. Da un'app.",
+      "icm.sub":"Intercom software basato sul modello delle matrici broadcast, per iPhone, iPad e Mac. Le postazioni ricevono un invito firmato via link o QR.",
+      "icm.f1":"TALK, LISTEN, partyline e conferenze",
+      "icm.f2":"Fino a 16 circuiti N-1 configurabili con hardware compatibile",
+      "icm.f3":"App native iOS, iPadOS e macOS, invito con QR",
+      "icm.f4":"La regia comunica in modo mirato con un singolo reparto",
+      "icm.cta":"Scopri VORTEX Intercom <span class='ar'>→</span>",
+      "meet.eyebrow":"Prototipo funzionale · VORTEX Meet","meet.h2":"Ognuno parla la sua lingua. L'AI prende nota.",
+      "meet.sub":"Prototipo autonomo per riunioni multilingue con traduzione simultanea, sottotitoli tradotti e assistente AI. È progettato anche per future integrazioni broadcast.",
+      "meet.f1":"Verbale, sintesi e attività generati a fine riunione",
+      "meet.f2":"Traduzione simultanea audio e testuale durante la conversazione",
+      "meet.f3":"Canale dati predisposto per integrazioni broadcast",
+      "meet.f4":"Dieci lingue con sottotitoli tradotti dal vivo",
+      "meet.cta":"Scopri VORTEX Meet <span class='ar'>→</span>",
+      "gfx.eyebrow":"Prototipo funzionale · VORTEX AI Graphic Studio","gfx.h2":"Grafiche broadcast guidate dalla voce.",
+      "gfx.sub":"Controller basato su SPX-GC con comandi vocali, assistenza Gemini per contenuti e configurazione dei template, collaborazione tramite Supabase e playout CasparCG.",
+      "gfx.f1":"Comandi vocali tradotti in azioni controllabili sul rundown","gfx.f2":"Assistenza AI per contenuti, template e sequenze operative","gfx.f3":"Scalette condivise tra postazioni autorizzate","gfx.f4":"Preview prima del playout CasparCG",
+      "gfx.cta":"Scopri VORTEX AI Graphic Studio <span class='ar'>→</span>","gfx.demo.role":"Conduttrice · Edizione sera","gfx.demo.prompt":"«Prepara il sottopancia della conduttrice»",
+      "close.eyebrow":"Un ecosistema coordinato","close.h2":"VORTEX. <span class='v'>Quattro prodotti.</span>",
+      "close.p":"Regia, Meet e AI Graphic Studio sono prototipi funzionali. Intercom è in validazione esterna tramite beta test su TestFlight.",
+      "close.cta1":"Scopri di più","close.cta2":"Esplora i prodotti",
+      "foot.rights":"tutti i diritti riservati","foot.privacy":"La landing non usa cookie, analytics, profilazione o raccolta dati"
+    },
+    en:{
+      "meta.title":"VORTEX — from the newsroom to air",
+      "skip":"Skip to content",
+      "meta.desc":"VORTEX is an ecosystem of four modular applications for television production and real-time communication. AI suggests, the control room and newsroom decide.",
+      "nav.news":"Newsroom","nav.regia":"Control","nav.intercom":"Intercom","nav.meet":"Meet","nav.graphics":"Graphics","nav.cta":"Learn more",
+      "hero.eyebrow":"Broadcast ecosystem · functional prototypes",
+      "hero.h1":"From the newsroom <span class='air'>to air.</span><br>You stay in command.",
+      "hero.lead":"Four modular applications for television production and real-time communication. <b>AI suggests, the control room and newsroom decide.</b>",
+      "hero.cta1":"See how it works","hero.cta2":"Learn more",
+      "hero.p1":"Software-first","hero.p2":"Voice commands","hero.p3":"Configurable outputs","hero.p4":"Self-hosted",
+      "flow.eyebrow":"How it works","flow.h2":"From story to air, all in one place.",
+      "flow.p":"The AI does the heavy lifting. The decisions that matter stay yours.",
+      "flow.s1t":"Reads the news","flow.s1p":"Aggregates selected outlets in real time, with automatic translation of foreign sources.",
+      "flow.s2t":"AI evaluates and suggests","flow.s2p":"NewsIntelligence gathers configured sources, evaluates stories and suggests the newscast rundown.",
+      "flow.s3t":"The newsroom approves","flow.s3p":"The newsroom selects the stories and confirms scripts, graphics and running order.",
+      "flow.s4t":"You go to air","flow.s4p":"Nothing hits the screen without your TAKE. The live show stays in your hands.",
+      "flow.tag.ai":"AI","flow.tag.you":"You decide",
+      "news.eyebrow":"Newsroom · NewsIntelligence","news.h2":"NewsIntelligence suggests. The newsroom and control room decide.",
+      "news.sub":"It gathers configured sources, evaluates stories and suggests the newscast rundown. Scripts, graphics and playout remain under human control.",
+      "news.f1":"Importance and newscast-relevance scores on every story",
+      "news.f2":"Foreign sources translated automatically",
+      "news.f3":"You pick, story by story, what enters the rundown",
+      "news.f4":"Suggested rundown and content for a 60-second bulletin",
+      "news.badge":"NewsIntelligence at work","news.prog":"NewsIntelligence at work",
+      "news.in":"in rundown","news.add":"add","news.sel":"in rundown","news.populate":"Fill rundown",
+      "regia.eyebrow":"Functional prototype · VORTEX Regia","regia.h2":"A software switcher. By voice, too.",
+      "regia.sub":"M/E, DVE, keyer, multiview, broadcast audio, replay and configurable outputs in a single control environment.",
+      "regia.f1":"Program and Preview with transitions and T-bar",
+      "regia.f2":"Audio console: HPF, EQ, gate, compressor and estimated LUFS-S",
+      "regia.f3":"TSL 3.1/5.0 tally support for cameras",
+      "regia.f4":"“AIRSPEED 2 on air”, “anchor lower”: the room executes",
+      "regia.cta":"Explore VORTEX Regia <span class='ar'>→</span>",
+      "icm.eyebrow":"External beta test · VORTEX Intercom","icm.h2":"Talk to the whole crew. From an app.",
+      "icm.sub":"Software intercom based on the broadcast matrix model, for iPhone, iPad and Mac. Positions receive a signed invite by link or QR.",
+      "icm.f1":"TALK, LISTEN, party-line and conferences",
+      "icm.f2":"Up to 16 configurable N-1 circuits with compatible hardware",
+      "icm.f3":"Native iOS, iPadOS and macOS apps, QR invite",
+      "icm.f4":"The room talks to a single department",
+      "icm.cta":"Explore VORTEX Intercom <span class='ar'>→</span>",
+      "meet.eyebrow":"Functional prototype · VORTEX Meet","meet.h2":"Everyone speaks their language. The AI takes the notes.",
+      "meet.sub":"A standalone prototype for multilingual meetings with simultaneous translation, translated captions and an AI assistant. It is also designed for future broadcast integrations.",
+      "meet.f1":"Minutes, summary and action items generated after the meeting",
+      "meet.f2":"Simultaneous translation, spoken and written, as you speak",
+      "meet.f3":"Data channel prepared for broadcast integrations",
+      "meet.f4":"Ten languages with live translated captions",
+      "meet.cta":"Explore VORTEX Meet <span class='ar'>→</span>",
+      "gfx.eyebrow":"Functional prototype · VORTEX AI Graphic Studio","gfx.h2":"Voice-driven broadcast graphics.",
+      "gfx.sub":"An SPX-GC-based controller with voice commands, Gemini assistance for template content and configuration, Supabase collaboration and CasparCG playout.",
+      "gfx.f1":"Voice commands translated into controllable rundown actions","gfx.f2":"AI assistance for content, templates and operational sequences","gfx.f3":"Shared rundowns across authorized workstations","gfx.f4":"Preview before CasparCG playout",
+      "gfx.cta":"Explore VORTEX AI Graphic Studio <span class='ar'>→</span>","gfx.demo.role":"News anchor · Evening edition","gfx.demo.prompt":"“Prepare the anchor lower third”",
+      "close.eyebrow":"A coordinated ecosystem","close.h2":"VORTEX. <span class='v'>Four products.</span>",
+      "close.p":"Regia, Meet and AI Graphic Studio are functional prototypes. Intercom is undergoing external beta validation through TestFlight.",
+      "close.cta1":"Learn more","close.cta2":"Explore the products",
+      "foot.rights":"all rights reserved","foot.privacy":"This landing page uses no cookies, analytics, profiling or data collection"
+    }
+  };
+
+  function applyLang(lang){
+    var dict = I18N[lang] || I18N.it;
+    document.documentElement.lang = lang;
+    document.title = dict["meta.title"] || document.title;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n'); if(dict[k]!=null) el.textContent = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-html'); if(dict[k]!=null) el.innerHTML = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function(el){
+      var a = el.getAttribute('data-i18n-attr'), k = el.getAttribute('data-i18n');
+      if(dict[k]!=null) el.setAttribute(a, dict[k]);
+    });
+    document.querySelectorAll('.langsw button').forEach(function(b){
+      var selected = b.getAttribute('data-lang')===lang;
+      b.classList.toggle('on', selected);
+      b.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+  var qlang=null; try{ qlang=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  if(qlang!=='it'&&qlang!=='en') qlang=null;
+  var initial = qlang || ((navigator.language||'it').toLowerCase().indexOf('it')===0 ? 'it' : 'en');
+  applyLang(initial);
+  document.querySelectorAll('.langsw button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.getAttribute('data-lang')); });
+  });
+
+  /* =============== reveal on scroll =============== */
+  var io = new IntersectionObserver(function(ents){
+    ents.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.14});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* =============== score bars (news) =============== */
+  var newsUi = document.getElementById('newsUi');
+  if(newsUi){
+    var no = new IntersectionObserver(function(ents){
+      ents.forEach(function(e){
+        if(!e.isIntersecting) return;
+        newsUi.querySelectorAll('.ncard').forEach(function(c){
+          var imp=c.getAttribute('data-imp'), tg=c.getAttribute('data-tg');
+          var bars=c.querySelectorAll('.sc .bar i');
+          if(bars[0]) bars[0].style.width=imp+'%';
+          if(bars[1]) bars[1].style.width=tg+'%';
+        });
+        no.disconnect();
+      });
+    }, {threshold:.3});
+    no.observe(newsUi);
+  }
+
+  /* =============== OSD comando vocale (typewriter) =============== */
+  function typewriter(qEl, aEl, seq){
+    if(!qEl) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var i=0;
+    function run(){
+      var item = seq[i % seq.length];
+      var q = item[0], a = item[1];
+      if(reduce){ qEl.textContent=q; if(aEl) aEl.textContent=a; setTimeout(function(){ i++; run(); }, 3200); return; }
+      qEl.textContent=''; if(aEl) aEl.textContent='';
+      var c=0;
+      (function typ(){
+        if(c<=q.length){ qEl.textContent=q.slice(0,c); c++; setTimeout(typ, 46); }
+        else { setTimeout(function(){ if(aEl) aEl.textContent=a; setTimeout(function(){ i++; run(); }, 2100); }, 380); }
+      })();
+    }
+    run();
+  }
+  typewriter(document.getElementById('osdQ'), document.getElementById('osdA'), [
+    ["AIRSPEED 2 in onda","PGM → AIRSPEED 2 · stacco eseguito"],
+    ["lower conduttore","GFX LOWER → chiave DSK · in onda"],
+    ["esterna 1 in preview","PVW → ESTERNA 1 · Milano"],
+    ["suggerisci la scaletta dalle notizie","NewsIntelligence → 6 voci suggerite"]
+  ]);
+  typewriter(document.getElementById('osdQ2'), document.getElementById('osdA2'), [
+    ["manda in onda","TAKE → transizione MIX 20f"],
+    ["apri la chiave della lower","DSK 1 → ON · verde → rosso"],
+    ["esterna 2 in preview","PVW → ESTERNA 2 · Roma"]
+  ]);
+
+  /* =============== VU meter (audio strips) =============== */
+  var vus = document.querySelectorAll('#audioStrips .vu');
+  if(vus.length && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    setInterval(function(){
+      vus.forEach(function(vu){
+        vu.querySelectorAll('span').forEach(function(s){
+          var h = 6 + Math.round(Math.random()*Math.random()*18);
+          s.style.height = h+'px';
+        });
+      });
+    }, 130);
+  } else {
+    vus.forEach(function(vu){ vu.querySelectorAll('span').forEach(function(s){ s.style.height='12px'; }); });
+  }
+
+  /* =============== tally che passa nel multiview (hero) =============== */
+  var mv = document.getElementById('heroMv');
+  if(mv && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    var cells = mv.querySelectorAll('.cell');
+    var WHO={"CAM 1":"GIULIA RINALDI · TG","CAM 2":"MARCO BIANCHI · OSPITE","ESTERNA 1":"SARA CONTI · MILANO","ESTERNA 2":"LUCA FERRARI · ROMA","AIRSPEED 1":"SERVIZIO · RINNOVABILI","M/E 1":"COMPOSIZIONE · DVE","REPLAY":"REPLAY · SLOW-MO","LIVEU":"COLLEGAMENTO · 4G"};
+    function syncMon(pref,cell){
+      if(!cell) return;
+      var f=document.getElementById(pref+'Feed'),n=document.getElementById(pref+'Name'),w=document.getElementById(pref+'Who');
+      var lab=(cell.querySelector('.cu')&&cell.querySelector('.cu').textContent)||'';
+      if(f) f.style.backgroundImage=cell.style.backgroundImage;
+      if(n) n.textContent=lab; if(w) w.textContent=WHO[lab]||'';
+    }
+    var order=[0,2,4,1], k=0;
+    function step(){
+      cells.forEach(function(c){ c.classList.remove('pgm','pvw'); });
+      var pgm=order[k], pvw=order[(k+1)%order.length];
+      if(cells[pgm]) cells[pgm].classList.add('pgm');
+      if(cells[pvw]) cells[pvw].classList.add('pvw');
+      syncMon('mPgm',cells[pgm]); syncMon('mPvw',cells[pvw]);
+      k=(k+1)%order.length;
+    }
+    step(); setInterval(step, 2600);
+  }
+
+  /* =============== intercom LED che respirano =============== */
+  var imx = document.getElementById('imx');
+  if(imx && !window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+    var ports = Array.prototype.slice.call(imx.querySelectorAll('.port'));
+    setInterval(function(){
+      var idle = ports.filter(function(p){ return !p.classList.contains('talk'); });
+      var p = idle[Math.floor(Math.random()*idle.length)];
+      if(p) p.classList.toggle('listen');
+    }, 1600);
+  }
+})();
+</script>
+</body>
+</html>
